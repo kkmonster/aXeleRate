@@ -15,6 +15,8 @@ import matplotlib
 import matplotlib.pyplot as plt
 metrics_dict = {'val_accuracy':['accuracy'],'val_loss':[],'mAP':[]}
 
+from collections import Counter
+
 class PlotCallback(keras.callbacks.Callback):
     def __init__(self, filepath, metric):
 
@@ -125,6 +127,17 @@ def train(model,
         graph = PlotCallback(save_plot_name,metrics)
         callbacks= [early_stop, checkpoint, reduce_lr, graph] 
 
+    weights = none
+    try:
+        counter = Counter(train_generator.classes)                          
+        max_val = float(max(counter.values()))       
+        weights = {class_id : max_val/num_images for class_id, num_images in counter.items()}                     
+        print("class_weight=", weights)
+    except:
+        print("class_weight=none")
+
+
+
     # 4. training
     try:
         model.fit_generator(generator = train_batch_gen,
@@ -135,7 +148,8 @@ def train(model,
                         callbacks        = callbacks,                        
                         verbose          = 1,
                         workers          = 2,
-                        max_queue_size   = 4)
+                        max_queue_size   = 4,
+                        class_weight=weights)
     except KeyboardInterrupt:
         model.save(save_weights_name_ctrlc,overwrite=True,include_optimizer=False)
         return model.layers, save_weights_name_ctrlc 
