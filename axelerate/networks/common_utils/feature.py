@@ -9,6 +9,7 @@ from keras.applications import NASNetMobile
 from keras.applications import ResNet50
 
 from .mobilenet_sipeed.mobilenet import MobileNet
+# from keras.applications import MobileNet
 
 def create_feature_extractor(architecture, input_size, weights = None):
     """
