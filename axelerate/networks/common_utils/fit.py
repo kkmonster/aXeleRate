@@ -129,7 +129,7 @@ def train(model,
 
     weights = none
     try:
-        counter = Counter(train_generator.classes)                          
+        counter = Counter(train_batch_gen.classes)                          
         max_val = float(max(counter.values()))       
         weights = {class_id : max_val/num_images for class_id, num_images in counter.items()}                     
         print("class_weight=", weights)
