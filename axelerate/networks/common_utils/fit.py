@@ -127,12 +127,12 @@ def train(model,
         graph = PlotCallback(save_plot_name,metrics)
         callbacks= [early_stop, checkpoint, reduce_lr, graph] 
 
-    weights = none
+    class_weight = None
     try:
         counter = Counter(train_batch_gen.classes)                          
         max_val = float(max(counter.values()))       
-        weights = {class_id : max_val/num_images for class_id, num_images in counter.items()}                     
-        print("class_weight=", weights)
+        class_weight = {class_id : max_val/num_images for class_id, num_images in counter.items()}                     
+        print("class_weight=", class_weight)
     except:
         print("class_weight=none")
 
@@ -149,7 +149,7 @@ def train(model,
                         verbose          = 1,
                         workers          = 2,
                         max_queue_size   = 4,
-                        class_weight=weights)
+                        class_weight=class_weight)
     except KeyboardInterrupt:
         model.save(save_weights_name_ctrlc,overwrite=True,include_optimizer=False)
         return model.layers, save_weights_name_ctrlc 
